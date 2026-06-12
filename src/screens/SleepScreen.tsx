@@ -277,33 +277,8 @@ export default function SleepScreen({ onNavigate }: SleepScreenProps): React.JSX
             </View>
           </View>
 
-          {/* ── Pet area ─────────────────────────────────────── */}
-          <View style={isMaxHappy || !isSleeping ? styles.petAreaAwake : styles.petAreaSleeping}>
-            <View style={styles.confettiAnchor}>
-              {showConfetti && Array.from({ length: 12 }).map((_, i) => (
-                <ConfettiParticle key={i} index={i} />
-              ))}
-            </View>
-
-            <Animated.View style={{ opacity: petOpacity, alignItems: 'center' }}>
-              {/* ZZZ float above sleeping pet */}
-              {isSleeping && (
-                <Animated.Text
-                  style={[
-                    styles.zzz,
-                    { opacity: zzzOpacity, transform: [{ translateY: zzzY }] },
-                  ]}
-                >
-                  💤
-                </Animated.Text>
-              )}
-              <PetDisplay
-                size={250}
-                isSleeping={isSleeping}
-                isHappy={isMaxHappy}
-              />
-            </Animated.View>
-          </View>
+          {/* ── Spacer to push bottom controls down ─────────── */}
+          <View style={styles.spacer} />
 
           {/* ── Energy label ─────────────────────────────────── */}
           <View style={styles.labelWrap}>
@@ -351,6 +326,41 @@ export default function SleepScreen({ onNavigate }: SleepScreenProps): React.JSX
             )}
           </View>
 
+          {/* ── Pet area (Absolute Overlay) ─────────────────── */}
+          <View style={styles.petAreaAbsolute} pointerEvents="none">
+            <View style={styles.confettiAnchor}>
+              {showConfetti && Array.from({ length: 12 }).map((_, i) => (
+                <ConfettiParticle key={i} index={i} />
+              ))}
+            </View>
+
+            <Animated.View
+              style={[
+                styles.petWrapper,
+                { opacity: petOpacity },
+                isSleeping ? styles.petSleeping : styles.petAwake,
+              ]}
+            >
+              {/* ZZZ float above sleeping pet */}
+              {isSleeping && (
+                <Animated.Text
+                  style={[
+                    styles.zzz,
+                    { opacity: zzzOpacity, transform: [{ translateY: zzzY }] },
+                  ]}
+                >
+                  💤
+                </Animated.Text>
+              )}
+              <PetDisplay
+                size={250}
+                isSleeping={isSleeping}
+                isHappy={isMaxHappy}
+                hideBadge={true}
+              />
+            </Animated.View>
+          </View>
+
           <CelebrationRain active={showCelebration} />
         </Animated.View>
       </RoomBackground>
@@ -365,6 +375,7 @@ export default function SleepScreen({ onNavigate }: SleepScreenProps): React.JSX
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#000' },
   inner: { flex: 1 },
+  spacer: { flex: 1 },
 
   topBar: {
     flexDirection: 'row',
@@ -389,26 +400,30 @@ const styles = StyleSheet.create({
   },
 
   // ── Pet positioning ────────────────────────────────────────────────────────
-  petAreaAwake: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end',
-    paddingBottom: 35,
-    paddingLeft: 300,
+  petAreaAbsolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
-  petAreaSleeping: {
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end',
-    paddingBottom: 0,
-    paddingTop: 800,
-    paddingLeft: 200,
+  petWrapper: {
+    alignItems: 'center',
+    position: 'absolute',
+  },
+  petSleeping: {
+    bottom: 45,
+    left: 25,
+  },
+  petAwake: {
+    bottom: 270,
+    alignSelf: 'center',
   },
 
   // Confetti burst anchor (zero-size, centred over pet)
   confettiAnchor: {
     position: 'absolute',
-    bottom: 130,
+    bottom: 380,
     alignSelf: 'center',
     width: 0,
     height: 0,

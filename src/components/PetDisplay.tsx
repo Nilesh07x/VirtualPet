@@ -67,6 +67,7 @@ interface PetDisplayProps {
   isSleeping?: boolean;
   isEating?: boolean;
   isHappy?: boolean;   // forced happy (e.g. after bath)
+  hideBadge?: boolean;
 }
 
 export function PetDisplay({
@@ -74,6 +75,7 @@ export function PetDisplay({
   isSleeping = false,
   isEating = false,
   isHappy = false,
+  hideBadge = false,
 }: PetDisplayProps): React.JSX.Element {
   const bounceY = useRef(new Animated.Value(0)).current;
   const bounceScale = useRef(new Animated.Value(1)).current;
@@ -191,12 +193,14 @@ export function PetDisplay({
       </Animated.View>
 
       {/* ── Mood badge ────────────────────────────────────────────────── */}
-      <View style={[styles.badge, { borderColor: cfg.glowColor + '90' }]}>
-        <Text style={styles.badgeEmoji}>{cfg.emoji}</Text>
-        <Text style={[styles.badgeLabel, { color: cfg.glowColor }]}>
-          {cfg.label}
-        </Text>
-      </View>
+      {!hideBadge && (
+        <View style={[styles.badge, { borderColor: cfg.glowColor + '90' }]}>
+          <Text style={styles.badgeEmoji}>{cfg.emoji}</Text>
+          <Text style={[styles.badgeLabel, { color: cfg.glowColor }]}>
+            {cfg.label}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
